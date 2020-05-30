@@ -1,13 +1,11 @@
 <template>
-  <div class="goods-item">
-    <a :href="goodsItem.link">
-      <img :src="goodsItem.show.img" alt="">
-      <div class="goods-info">
-          <p>{{goodsItem.title}}</p>
-          <span class="price">{{goodsItem.price}}</span>
-          <span class="collect">{{goodsItem.cfav}}</span>
-      </div>
-    </a>
+  <div class="goods-item" @click="itemClick">
+    <img :src="showImage" alt="" @load="imgLoad">
+    <div class="goods-info">
+        <p>{{goodsItem.title}}</p>
+        <span class="price">{{goodsItem.price}}</span>
+        <span class="collect">{{goodsItem.cfav}}</span>
+    </div>
   </div>
 </template>
 
@@ -19,6 +17,28 @@ export default {
       type: Object,
       default(){
         return {}
+      }
+    }
+  },
+  computed: {
+    showImage(){
+      return this.goodsItem.image || this.goodsItem.show.img
+    }
+  },
+  methods: {
+    imgLoad(){
+      if(this.$route.path.indexOf('/home')){
+        this.$bus.$emit('itemImageLoad')
+      }else if(this.$route.path.indexOf('/detail')){
+        this.$bus.$emit('detailItemImgLoad')
+      }
+    },
+    itemClick(){
+      /* console.log('跳转到详情页') */
+      if(this.goodsItem.iid){
+        return this.$router.push('/detail/' + this.goodsItem.iid)
+      }else{
+        return this.$router.push('/detail/' + this.goodsItem.item_id)
       }
     }
   }
